@@ -198,27 +198,77 @@ Funcionalidades e melhorias implementadas:
 
 **Observação:** a arquitetura utiliza os conceitos do MVC adaptados a uma aplicação de console, com uma camada adicional de serviços para integração com a API.
 
+### Etapa 5 — Interação e necessidades dos mascotes
+
+**Status:** Concluída.
+
+Implementação das mecânicas básicas de interação com os Pokémon adotados, permitindo acompanhar e modificar suas necessidades durante o jogo.
+
+**Atributos implementados:**
+
+- `Alimentacao`: representa o nível de alimentação do mascote.
+- `Humor`: representa o estado de felicidade do mascote.
+- `Energia`: representa o nível de disposição e descanso do mascote.
+
+Os três atributos utilizam uma escala de 0 a 10 e recebem valores iniciais aleatórios no construtor da classe `Mascote`.
+
+**Funcionalidades implementadas:**
+
+- Inicialização aleatória das necessidades dos mascotes.
+- Seleção de um Pokémon já adotado para interação.
+- Consulta individual do estado do mascote.
+- Exibição dos níveis de alimentação, humor e energia.
+- Classificação textual das condições de cada atributo.
+- Implementação das ações brincar, alimentar e dormir.
+- Atualização dos atributos conforme as ações executadas.
+- Validação das condições necessárias para executar cada ação.
+- Bloqueio de ações quando as necessidades correspondentes impedem sua execução.
+- Proteção dos atributos para mantê-los no intervalo de 0 a 10.
+- Retorno ao menu principal sem perder o estado dos mascotes durante a execução.
+
+**Regras de interação:**
+
+| Ação      | Alimentação |         Humor |       Energia |
+| --------- | ----------: | ------------: | ------------: |
+| Brincar   |          -1 |            +2 |            -2 |
+| Alimentar |          +3 |            +1 | Sem alteração |
+| Dormir    |          -1 | Sem alteração |            +4 |
+
+**Restrições das ações:**
+
+- Brincar é bloqueado quando a alimentação ou a energia está em zero.
+- Alimentar é bloqueado quando a alimentação já está em 10.
+- Dormir é bloqueado quando a energia já está em 10.
+- Os atributos nunca ultrapassam os limites de 0 a 10.
+
+**Responsabilidades das classes:**
+
+- `Mascote`: mantém os atributos e implementa as regras de negócio das interações.
+- `InterfaceUsuario`: apresenta os menus, permite selecionar mascotes e exibe seus estados.
+- `TamagotchiController`: coordena as interações e apresenta o resultado das ações ao jogador.
+
+**Observação:** os atributos e estados dos mascotes permanecem em memória durante a execução da aplicação. A persistência dos dados ainda não foi implementada.
+
 ## 🌱 Organização das branches
 
 O desenvolvimento é separado por etapas, mantendo a branch `main` como referência principal do projeto.
 
-| Branch                         | Etapa                               |
-| ------------------------------ | ----------------------------------- |
-| `main`                         | Versão principal                    |
-| `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID     |
-| `etapa-2-desserializacao-json` | Modelagem e desserialização JSON    |
-| `etapa-3-interface-adocao`     | Interface, menu e sistema de adoção |
-| `etapa-4-arquitetura-mvc`      | Organização da arquitetura MVC      |
+| Branch                         | Etapa                                 |
+| ------------------------------ | ------------------------------------- |
+| `main`                         | Versão principal                      |
+| `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID       |
+| `etapa-2-desserializacao-json` | Modelagem e desserialização JSON      |
+| `etapa-3-interface-adocao`     | Interface, menu e sistema de adoção   |
+| `etapa-4-arquitetura-mvc`      | Organização da arquitetura MVC        |
+| `etapa-5-interacao-mascotes`   | Interação e necessidades dos mascotes |
 
 ## 📌 Próximas etapas
 
 As funcionalidades abaixo fazem parte do planejamento e ainda não foram implementadas:
 
 - [ ] Persistência dos mascotes adotados.
-- [ ] Sistema de alimentação e necessidades.
-- [ ] Sistema de felicidade e amizade.
-- [ ] Mecânicas de evolução.
-- [ ] Interações com os mascotes.
+- [ ] Sistema de amizade e evolução.
+- [ ] Mecânicas de evolução dos Pokémon.
 - [ ] Aprimoramento da navegação e apresentação do catálogo.
 
 ## 🎯 Objetivo do projeto

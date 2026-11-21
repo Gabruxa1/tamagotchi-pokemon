@@ -36,18 +36,22 @@ public class TamagotchiController
 					break;
 
 				case 3:
+					InteragirComMascote();
+					break;
+
+				case 4:
 					Console.WriteLine($"Até a próxima, {nomeJogador}!");
 					break;
 			}
 
-			if (opcao != 3)
+			if (opcao != 4)
 			{
 				Console.WriteLine();
 				Console.WriteLine("Pressione ENTER para continuar...");
 				Console.ReadLine();
 			}
 
-		} while (opcao != 3);
+		} while (opcao != 4);
 	}
 
 	private async Task AdotarPokemon()
@@ -97,5 +101,76 @@ public class TamagotchiController
 		{
 			Console.WriteLine($"Erro durante a adoção: {ex.Message}");
 		}
+	}
+
+	private void InteragirComMascote()
+	{
+		int? indiceSelecionado = _interfaceUsuario.SelecionarMascote(
+				_mascotesAdotados
+		);
+
+		if (indiceSelecionado == null)
+		{
+			return;
+		}
+
+		Mascote mascote = _mascotesAdotados[indiceSelecionado.Value];
+
+		int opcao;
+
+		do
+		{
+			opcao = _interfaceUsuario.ExibirMenuInteracao(mascote);
+
+			switch (opcao)
+			{
+				case 1:
+					_interfaceUsuario.ExibirStatusMascote(mascote);
+					break;
+
+				case 2:
+					if (mascote.Brincar())
+					{
+						Console.WriteLine($"{mascote.Name} brincou e se divertiu!");
+					}
+					else
+					{
+						Console.WriteLine(
+								$"{mascote.Name} está sem energia ou com fome e não pode brincar!"
+						);
+					}
+					break;
+
+				case 3:
+					if (mascote.Alimentar())
+					{
+						Console.WriteLine($"{mascote.Name} recebeu comida!");
+					}
+					else
+					{
+						Console.WriteLine($"{mascote.Name} já está completamente alimentado!");
+					}
+					break;
+
+				case 4:
+					if (mascote.Dormir())
+					{
+						Console.WriteLine($"{mascote.Name} foi dormir!");
+					}
+					else
+					{
+						Console.WriteLine($"{mascote.Name} já está completamente descansado!");
+					}
+					break;
+			}
+
+			if (opcao != 5)
+			{
+				Console.WriteLine();
+				Console.WriteLine("Pressione ENTER para continuar...");
+				Console.ReadLine();
+			}
+
+		} while (opcao != 5);
 	}
 }

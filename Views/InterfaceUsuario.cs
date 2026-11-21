@@ -54,12 +54,13 @@ public class InterfaceUsuario
 			Console.WriteLine();
 			Console.WriteLine("  [1] Adoção de mascotes");
 			Console.WriteLine("  [2] Ver mascotes adotados");
-			Console.WriteLine("  [3] Sair do jogo");
+			Console.WriteLine("  [3] Interagir com mascote");
+			Console.WriteLine("  [4] Sair do jogo");
 			Console.WriteLine();
 			Console.Write("  Escolha uma opção: ");
 
 			if (!int.TryParse(Console.ReadLine(), out opcao) ||
-				opcao < 1 || opcao > 3)
+				opcao < 1 || opcao > 4)
 			{
 				Console.WriteLine();
 				Console.WriteLine("Opção inválida! Tente novamente.");
@@ -145,6 +146,49 @@ public class InterfaceUsuario
 		Console.WriteLine();
 	}
 
+	public void ExibirStatusMascote(Mascote mascote)
+	{
+		Console.Clear();
+
+		Console.WriteLine("========================================");
+		Console.WriteLine("          ESTADO DO MASCOTE");
+		Console.WriteLine("========================================");
+		Console.WriteLine();
+
+		string estadoAlimentacao = mascote.Alimentacao switch
+		{
+			<= 2 => "Muita fome",
+			<= 5 => "Precisa comer",
+			<= 8 => "Bem alimentado",
+			_ => "Satisfeito"
+		};
+
+		string estadoHumor = mascote.Humor switch
+		{
+			<= 2 => "Muito triste",
+			<= 5 => "Desanimado",
+			<= 8 => "Feliz",
+			_ => "Muito alegre"
+		};
+
+		string estadoEnergia = mascote.Energia switch
+		{
+			<= 2 => "Exausto",
+			<= 5 => "Cansado",
+			<= 8 => "Disposto",
+			_ => "Descansado"
+		};
+
+		Console.WriteLine($"Mascote: {mascote.Name.ToUpper()}");
+		Console.WriteLine();
+
+		Console.WriteLine($"Alimentação: {mascote.Alimentacao}/10 - {estadoAlimentacao}");
+		Console.WriteLine($"Humor:       {mascote.Humor}/10 - {estadoHumor}");
+		Console.WriteLine($"Energia:     {mascote.Energia}/10 - {estadoEnergia}");
+
+		Console.WriteLine();
+	}
+
 	public bool DesejaVerDetalhes()
 	{
 		while (true)
@@ -226,5 +270,88 @@ public class InterfaceUsuario
 		}
 
 		Console.WriteLine($"Total de mascotes adotados: {mascotesAdotados.Count}");
+	}
+
+	public int? SelecionarMascote(List<Mascote> mascotesAdotados)
+	{
+		if (!mascotesAdotados.Any())
+		{
+			Console.WriteLine("Você ainda não adotou nenhum Pokémon.");
+			return null;
+		}
+
+		while (true)
+		{
+			Console.Clear();
+
+			Console.WriteLine("========================================");
+			Console.WriteLine("       SELECIONE SEU MASCOTE");
+			Console.WriteLine("========================================");
+			Console.WriteLine();
+
+			for (int i = 0; i < mascotesAdotados.Count; i++)
+			{
+				Console.WriteLine($"[{i + 1}] {mascotesAdotados[i].Name.ToUpper()}");
+			}
+
+			Console.WriteLine();
+			Console.WriteLine("[0] Voltar");
+			Console.WriteLine();
+			Console.Write("Escolha um mascote: ");
+
+			if (!int.TryParse(Console.ReadLine(), out int escolha))
+			{
+				Console.WriteLine("Entrada inválida!");
+				Console.ReadLine();
+				continue;
+			}
+
+			if (escolha == 0)
+			{
+				return null;
+			}
+
+			if (escolha < 1 || escolha > mascotesAdotados.Count)
+			{
+				Console.WriteLine("Mascote não encontrado!");
+				Console.ReadLine();
+				continue;
+			}
+
+			return escolha - 1;
+		}
+	}
+
+	public int ExibirMenuInteracao(Mascote mascote)
+	{
+		int opcao;
+
+		while (true)
+		{
+			Console.Clear();
+
+			Console.WriteLine("========================================");
+			Console.WriteLine($"       INTERAGINDO COM {mascote.Name.ToUpper()}");
+			Console.WriteLine("========================================");
+			Console.WriteLine();
+			Console.WriteLine("[1] Consultar estado");
+			Console.WriteLine("[2] Brincar");
+			Console.WriteLine("[3] Alimentar");
+			Console.WriteLine("[4] Dormir");
+			Console.WriteLine("[5] Voltar");
+			Console.WriteLine();
+			Console.Write("Escolha uma opção: ");
+
+			if (!int.TryParse(Console.ReadLine(), out opcao) ||
+					opcao < 1 || opcao > 5)
+			{
+				Console.WriteLine();
+				Console.WriteLine("Opção inválida! Tente novamente.");
+				Console.ReadLine();
+				continue;
+			}
+
+			return opcao;
+		}
 	}
 }
