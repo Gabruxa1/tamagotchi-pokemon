@@ -1,6 +1,6 @@
 ﻿using RestSharp;
 using System.Text.Json;
-
+using tamagotchi_pokemon.Models;
 
 var client = new RestClient("https://pokeapi.co/api/v2/");
 
@@ -63,12 +63,32 @@ var pokemonRequest = new RestRequest($"pokemon/{escolha}", Method.Get);
 
 var pokemonResponse = await client.ExecuteAsync(pokemonRequest);
 
-// 6. Exibir as características
+// 6. Converter o JSON em um objeto Mascote
 if (pokemonResponse.IsSuccessful &&
 	!string.IsNullOrWhiteSpace(pokemonResponse.Content))
 {
+	Mascote? mascote = JsonSerializer.Deserialize<Mascote>(
+		pokemonResponse.Content
+	);
+
+	if (mascote == null)
+	{
+		Console.WriteLine("Não foi possível interpretar os dados do Pokémon.");
+		return;
+	}
+
 	Console.WriteLine("\nPokémon selecionado:");
-	Console.WriteLine(pokemonResponse.Content);
+	Console.WriteLine($"Nome: {mascote.Name}");
+	Console.WriteLine($"Altura: {mascote.Height}");
+	Console.WriteLine($"Peso: {mascote.Weight}");
+
+	Console.WriteLine("\nHabilidades:");
+
+	foreach (var habilidade in mascote.Abilities)
+	{
+		Console.WriteLine($"{habilidade.Ability.Name}".ToUpper());
+
+	}
 }
 else
 {

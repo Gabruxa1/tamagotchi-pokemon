@@ -1,190 +1,167 @@
 # 🐾 Pokémon Tamagotchi
 
-**Projeto de desenvolvimento em C# utilizando a PokéAPI**
+Projeto desenvolvido em C# com integração à [PokéAPI](https://pokeapi.co/), com o objetivo de construir uma aplicação de console inspirada em mascotes virtuais Pokémon.
 
-O Pokémon Tamagotchi é um projeto experimental desenvolvido em C# com o objetivo de construir uma aplicação inspirada nos clássicos jogos de cuidados com mascotes virtuais, utilizando Pokémon como personagens.
+O desenvolvimento é organizado em etapas, utilizando conceitos de programação orientada a objetos, consumo de APIs REST, manipulação de JSON e modelagem de dados.
 
-A proposta é evoluir gradualmente a aplicação, explorando conceitos de programação, consumo de APIs REST, orientação a objetos, persistência de dados e desenvolvimento de funcionalidades interativas.
+## 🚀 Etapas do desenvolvimento
 
----
+### Etapa 1 — Consulta à PokéAPI e seleção de Pokémon
 
-## 📌 Etapa 1 — Integração com a PokéAPI e seleção de espécies
+**Status:** Concluída.
 
-**Status:** Concluída
+Implementação da integração com a PokéAPI para consultar e apresentar o catálogo de espécies disponíveis.
 
-### Objetivo
+Funcionalidades implementadas:
 
-Implementar a comunicação entre a aplicação C# e a PokéAPI, permitindo que o jogador consulte o catálogo de espécies disponíveis, escolha um Pokémon por meio de seu ID e visualize as informações retornadas pela API.
+- Configuração do cliente HTTP utilizando RestSharp.
+- Consulta ao endpoint `pokemon-species`.
+- Recuperação de até 2.000 espécies.
+- Extração dos IDs e nomes das espécies.
+- Exibição do catálogo no terminal.
+- Solicitação do ID do Pokémon desejado.
+- Validação da entrada utilizando `int.TryParse` e `HashSet<int>`.
+- Consulta dos dados individuais pelo endpoint `pokemon/{id}`.
 
-### Tecnologias utilizadas
+**Endpoint utilizado:**
 
-| Tecnologia         | Aplicação                       |
-| ------------------ | ------------------------------- |
-| C#                 | Linguagem de programação        |
-| .NET 10            | Plataforma de desenvolvimento   |
-| Visual Studio Code | Ambiente de desenvolvimento     |
-| RestSharp 114.1.0  | Cliente para requisições HTTP   |
-| System.Text.Json   | Leitura e interpretação de JSON |
-| PokéAPI            | Fonte externa de dados          |
-
-### Funcionalidades implementadas
-
-- Inicialização de uma aplicação Console com .NET 10.
-- Instalação e configuração da biblioteca RestSharp via NuGet.
-- Configuração do endereço-base da PokéAPI.
-- Requisição HTTP GET para consultar o catálogo de espécies.
-- Consulta de até 2.000 espécies por meio do parâmetro `limit`.
-- Extração dos IDs e nomes diretamente dos resultados da API.
-- Exibição das opções disponíveis no console.
-- Solicitação de escolha do Pokémon por meio de um identificador inteiro (`int`).
-- Validação da entrada utilizando `int.TryParse()`.
-- Validação da existência do ID utilizando `HashSet<int>`.
-- Segunda requisição HTTP GET para consultar o Pokémon selecionado.
-- Recebimento e impressão do JSON retornado pela API.
-
-### Endpoints utilizados
-
-**1. Consulta do catálogo de espécies**
-
-Método: `GET`
-
-```text
-https://pokeapi.co/api/v2/pokemon-species?limit=2000
+```http
+GET https://pokeapi.co/api/v2/pokemon-species?limit=2000
 ```
 
-Responsabilidade: recuperar a lista de espécies, incluindo seus nomes e URLs, das quais são extraídos os identificadores.
-
-**2. Consulta individual do Pokémon**
-
-Método: `GET`
-
-```text
-https://pokeapi.co/api/v2/pokemon/{id}
+```http
+GET https://pokeapi.co/api/v2/pokemon/{id}
 ```
 
-Responsabilidade: recuperar as características do Pokémon escolhido pelo jogador.
+### Etapa 2 — Desserialização e modelagem dos dados JSON
 
-### Fluxo de execução
+**Status:** Concluída.
+
+Implementação da conversão da resposta JSON da PokéAPI em objetos C# utilizando `System.Text.Json`.
+
+Funcionalidades implementadas:
+
+- Criação de classes para representar os dados retornados pela API.
+- Mapeamento das propriedades JSON utilizando `JsonPropertyName`.
+- Desserialização da resposta com `JsonSerializer.Deserialize<Mascote>()`.
+- Representação de objetos aninhados.
+- Modelagem de listas de habilidades.
+- Identificação de habilidades e suas propriedades.
+- Exibição organizada das características do Pokémon selecionado.
+
+**Características apresentadas:**
+
+- Nome do Pokémon.
+- Altura.
+- Peso.
+- Lista de habilidades.
+
+**Estrutura dos modelos:**
 
 ```text
-INÍCIO
-   |
-   v
-Consultar catálogo de espécies
-   |
-   v
-Exibir ID e nome dos Pokémon
-   |
-   v
-Solicitar ID ao jogador
-   |
-   v
-Validar entrada
-   |
-   +---- ID inválido ----> Solicitar novamente
-   |
-   v
-Consultar Pokémon pelo ID
-   |
-   v
-Receber resposta JSON
-   |
-   v
-Exibir informações no console
-   |
-   v
-FIM
+Models/
+├── Mascote.cs
+├── AbilitySlot.cs
+└── AbilityInfo.cs
 ```
 
-### Conceitos praticados
+**Relacionamento entre os modelos:**
 
-- Comunicação HTTP entre aplicações.
-- Consumo de APIs REST.
-- Utilização de bibliotecas externas através do NuGet.
-- Criação de clientes e requisições com RestSharp.
-- Execução assíncrona com `async/await`.
-- Leitura e interpretação de respostas JSON com `System.Text.Json`.
-- Manipulação de coleções e estruturas de dados.
-- Conversão e validação de entradas do usuário.
-- Controle de fluxo utilizando estruturas condicionais e repetição.
+- `Mascote`: representa os dados principais do Pokémon.
+- `AbilitySlot`: representa cada habilidade e suas propriedades.
+- `AbilityInfo`: representa os dados internos de cada habilidade, incluindo nome e URL.
 
----
+**Exemplo de resultado:**
 
-## 🐾 Espécies de interesse do projeto
+```text
+Pokémon selecionado:
+Nome: eevee
+Altura: 3
+Peso: 65
 
-O catálogo inicial de mascotes terá cinco espécies como referência para o desenvolvimento das mecânicas de cuidado:
+Habilidades:
+RUN-AWAY
+ADAPTABILITY
+ANTICIPATION
+```
 
-| Pokémon    |  ID | Característica planejada             |
-| ---------- | --: | ------------------------------------ |
-| Eevee      | 133 | Evoluções condicionadas aos cuidados |
-| Togepi     | 175 | Felicidade e amizade                 |
-| Rockruff   | 744 | Energia e treinamento                |
-| Sprigatito | 906 | Personalidade e afinidade            |
-| Fuecoco    | 909 | Alimentação e descanso               |
+## 🛠️ Tecnologias utilizadas
 
-**Observação:** o catálogo implementado consulta as espécies disponibilizadas pela PokéAPI, não estando limitado às cinco espécies de interesse inicial.
+| Tecnologia         | Aplicação                      |
+| ------------------ | ------------------------------ |
+| C#                 | Linguagem de programação       |
+| .NET 10            | Plataforma de desenvolvimento  |
+| RestSharp 114.1.0  | Consumo de APIs REST           |
+| System.Text.Json   | Leitura e desserialização JSON |
+| PokéAPI            | Fonte dos dados dos Pokémon    |
+| Visual Studio Code | Ambiente de desenvolvimento    |
+| Git e GitHub       | Controle de versão             |
 
----
+## 📁 Estrutura do projeto
 
-## 🗺️ Roadmap do projeto
+```text
+tamagotchi-pokemon/
+│
+├── Models/
+│   ├── Mascote.cs
+│   ├── AbilitySlot.cs
+│   └── AbilityInfo.cs
+│
+├── Program.cs
+├── tamagotchi-pokemon.csproj
+├── README.md
+└── .gitignore
+```
 
-| Etapa | Desenvolvimento                                      | Status    |
-| ----- | ---------------------------------------------------- | --------- |
-| 01    | Integração com a PokéAPI e seleção por ID            | Concluída |
-| 02    | Tratamento de erros e desserialização tipada do JSON | Planejada |
-| 03    | Modelagem das entidades Pokémon em C#                | Planejada |
-| 04    | Exibição estruturada das características dos Pokémon | Planejada |
-| 05    | Sistema de adoção de mascotes                        | Planejada |
-| 06    | Necessidades: fome, energia e felicidade             | Planejada |
-| 07    | Evolução e sistema de amizade                        | Planejada |
-| 08    | Persistência e salvamento dos dados                  | Planejada |
-
----
+Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não são versionados.
 
 ## ▶️ Como executar
 
-### Pré-requisitos
+Pré-requisito: .NET 10 SDK instalado.
 
-- .NET 10 SDK instalado.
-- Acesso à internet.
-- Visual Studio Code ou outro editor compatível com C#.
+Clone o repositório e acesse o diretório do projeto:
 
-### Restaurar as dependências
+```bash
+git clone URL_DO_REPOSITORIO
+cd tamagotchi-pokemon
+```
+
+Restaure as dependências:
 
 ```bash
 dotnet restore
 ```
 
-### Executar a aplicação
+Execute a aplicação:
 
 ```bash
 dotnet run
 ```
 
-A aplicação realizará a consulta ao catálogo de espécies e solicitará ao jogador o ID do Pokémon desejado.
+## 🌱 Organização das branches
 
----
+O desenvolvimento é separado por etapas, mantendo a branch `main` como referência principal do projeto.
 
-## 📂 Estrutura atual
+| Branch                         | Etapa                            |
+| ------------------------------ | -------------------------------- |
+| `main`                         | Versão principal                 |
+| `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID  |
+| `etapa-2-desserializacao-json` | Modelagem e desserialização JSON |
 
-```text
-tamagotchi-pokemon/
-│
-├── Program.cs
-├── tamagotchi-pokemon.csproj
-├── README.md
-├── .gitignore
-│
-├── bin/
-└── obj/
-```
+## 📌 Próximas etapas
 
-_Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não devem ser versionados._
+As funcionalidades abaixo fazem parte do planejamento e ainda não foram implementadas:
 
----
+- [ ] Tratamento aprimorado de erros e respostas da API.
+- [ ] Consulta de múltiplos Pokémon antes da adoção.
+- [ ] Sistema de adoção do mascote.
+- [ ] Sistema de alimentação e necessidades.
+- [ ] Sistema de felicidade e amizade.
+- [ ] Mecânicas de evolução.
+- [ ] Persistência dos dados do mascote.
 
-## 🎯 Objetivo final
+## 🎯 Objetivo do projeto
 
-Desenvolver uma aplicação de mascotes virtuais Pokémon, permitindo ao jogador escolher, adotar e cuidar de diferentes espécies, acompanhando suas necessidades, personalidade, felicidade e evolução.
+Construir progressivamente uma aplicação de mascote virtual Pokémon, aplicando conceitos de desenvolvimento C#, integração com APIs, orientação a objetos, manipulação de dados e organização de software.
 
-**Projeto em desenvolvimento — Etapa 1 concluída.**
+O projeto possui caráter educacional e cada etapa é desenvolvida e validada individualmente.
