@@ -2,7 +2,7 @@ using RestSharp;
 using System.Text.Json;
 using tamagotchi_pokemon.Models;
 
-namespace tamagotchi_pokemon;
+namespace tamagotchi_pokemon.Services;
 
 public class ServicoPokemon
 {

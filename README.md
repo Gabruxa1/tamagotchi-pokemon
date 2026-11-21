@@ -89,12 +89,14 @@ Funcionalidades implementadas:
 - Exibição da quantidade total de mascotes adotados.
 - Tratamento de exceções durante o processo de adoção.
 
-**Organização das classes:**
+**Organização das classes na Etapa 3:**
 
-- `Program.cs`: coordena o fluxo principal da aplicação e mantém a coleção de mascotes adotados.
+- `Program.cs`: ponto de entrada da aplicação.
 - `InterfaceUsuario.cs`: concentra a interação com o jogador, menus e exibição de informações.
 - `ServicoPokemon.cs`: centraliza as consultas à PokéAPI.
 - `EspeciePokemon.cs`: representa os dados básicos das espécies disponíveis para seleção.
+
+A partir da Etapa 4, essas classes foram reorganizadas em camadas específicas, e o fluxo principal passou a ser controlado por `TamagotchiController`.
 
 **Observação:** os mascotes adotados são armazenados apenas durante a execução da aplicação. Os dados ainda não são persistidos em arquivos ou banco de dados.
 
@@ -115,19 +117,33 @@ Funcionalidades implementadas:
 ```text
 tamagotchi-pokemon/
 │
+├── Controllers/
+│   └── TamagotchiController.cs
+│
 ├── Models/
 │   ├── Mascote.cs
 │   ├── AbilitySlot.cs
 │   ├── AbilityInfo.cs
 │   └── EspeciePokemon.cs
 │
+├── Services/
+│   └── ServicoPokemon.cs
+│
+├── Views/
+│   └── InterfaceUsuario.cs
+│
 ├── Program.cs
-├── InterfaceUsuario.cs
-├── ServicoPokemon.cs
 ├── tamagotchi-pokemon.csproj
 ├── README.md
 └── .gitignore
 ```
+
+**Responsabilidade dos diretórios:**
+
+- `Controllers/`: controle do fluxo e das funcionalidades do jogo.
+- `Models/`: representação dos dados e entidades.
+- `Services/`: integração com serviços externos, como a PokéAPI.
+- `Views/`: interface de comunicação com o jogador.
 
 Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não são versionados.
 
@@ -154,6 +170,34 @@ Execute a aplicação:
 dotnet run
 ```
 
+### Etapa 4 — Organização da arquitetura MVC
+
+**Status:** Concluída.
+
+Reorganização da estrutura do projeto utilizando os conceitos do padrão arquitetural MVC (Model-View-Controller), separando as responsabilidades entre as classes.
+
+Funcionalidades e melhorias implementadas:
+
+- Criação da camada `Controllers` para centralizar o controle do jogo.
+- Criação da camada `Views` para organizar a interface com o jogador.
+- Criação da camada `Services` para separar a comunicação com a PokéAPI.
+- Transferência do fluxo principal de execução para `TamagotchiController`.
+- Implementação do método `Jogar()` para controlar o loop principal da aplicação.
+- Implementação do método `AdotarPokemon()` para centralizar o processo de adoção.
+- Inicialização dos serviços e da interface por meio do construtor do Controller.
+- Simplificação do `Program.cs`, que passou a atuar apenas como ponto de entrada da aplicação.
+- Utilização de operações assíncronas com `async` e `await`.
+- Organização dos namespaces conforme a estrutura de diretórios.
+
+**Responsabilidades das camadas:**
+
+- `Models`: representação dos dados dos Pokémon.
+- `Views`: interação com o jogador, menus e apresentação das informações.
+- `Controllers`: coordenação do fluxo do jogo e das regras de interação.
+- `Services`: comunicação com a PokéAPI e processamento das respostas externas.
+
+**Observação:** a arquitetura utiliza os conceitos do MVC adaptados a uma aplicação de console, com uma camada adicional de serviços para integração com a API.
+
 ## 🌱 Organização das branches
 
 O desenvolvimento é separado por etapas, mantendo a branch `main` como referência principal do projeto.
@@ -164,6 +208,7 @@ O desenvolvimento é separado por etapas, mantendo a branch `main` como referên
 | `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID     |
 | `etapa-2-desserializacao-json` | Modelagem e desserialização JSON    |
 | `etapa-3-interface-adocao`     | Interface, menu e sistema de adoção |
+| `etapa-4-arquitetura-mvc`      | Organização da arquitetura MVC      |
 
 ## 📌 Próximas etapas
 

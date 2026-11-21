@@ -1,0 +1,101 @@
+using tamagotchi_pokemon.Models;
+using tamagotchi_pokemon.Services;
+using tamagotchi_pokemon.Views;
+
+namespace tamagotchi_pokemon.Controllers;
+
+public class TamagotchiController
+{
+	private readonly InterfaceUsuario _interfaceUsuario;
+	private readonly ServicoPokemon _servicoPokemon;
+	private readonly List<Mascote> _mascotesAdotados = new();
+
+	public TamagotchiController()
+	{
+		_interfaceUsuario = new InterfaceUsuario();
+		_servicoPokemon = new ServicoPokemon();
+	}
+
+	public async Task Jogar()
+	{
+		string nomeJogador = _interfaceUsuario.BoasVindas();
+
+		int opcao;
+
+		do
+		{
+			opcao = _interfaceUsuario.ExibirMenuPrincipal(nomeJogador);
+			switch (opcao)
+			{
+				case 1:
+					await AdotarPokemon();
+					break;
+
+				case 2:
+					_interfaceUsuario.ExibirMascotesAdotados(_mascotesAdotados);
+					break;
+
+				case 3:
+					Console.WriteLine($"Até a próxima, {nomeJogador}!");
+					break;
+			}
+
+			if (opcao != 3)
+			{
+				Console.WriteLine();
+				Console.WriteLine("Pressione ENTER para continuar...");
+				Console.ReadLine();
+			}
+
+		} while (opcao != 3);
+	}
+
+	private async Task AdotarPokemon()
+	{
+		try
+		{
+			Console.WriteLine("Consultando catálogo de Pokémon...");
+
+			var especies = await _servicoPokemon.ListarEspeciesAsync();
+
+			int? idSelecionado = _interfaceUsuario.SelecionarEspecie(especies);
+
+			if (idSelecionado == null)
+			{
+				return;
+			}
+
+			Mascote? mascote = await _servicoPokemon.ObterPokemonAsync(
+				idSelecionado.Value
+			);
+
+			if (mascote == null)
+			{
+				Console.WriteLine("Não foi possível consultar este Pokémon.");
+				return;
+			}
+
+			if (_interfaceUsuario.DesejaVerDetalhes())
+			{
+				_interfaceUsuario.ExibirDetalhesPokemon(mascote);
+			}
+
+			if (_interfaceUsuario.ConfirmarAdocao(mascote.Name))
+			{
+				_mascotesAdotados.Add(mascote);
+
+				Console.WriteLine();
+				Console.WriteLine($"{mascote.Name.ToUpper()} foi adotado com sucesso!");
+			}
+			else
+			{
+				Console.WriteLine();
+				Console.WriteLine("Adoção cancelada.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Erro durante a adoção: {ex.Message}");
+		}
+	}
+}

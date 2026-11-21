@@ -1,6 +1,6 @@
-
 using tamagotchi_pokemon.Models;
-namespace tamagotchi_pokemon;
+
+namespace tamagotchi_pokemon.Views;
 
 public class InterfaceUsuario
 {
