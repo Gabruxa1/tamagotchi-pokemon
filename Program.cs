@@ -1,6 +1,42 @@
 ﻿using RestSharp;
 using System.Text.Json;
+using tamagotchi_pokemon;
 using tamagotchi_pokemon.Models;
+
+var interfaceUsuario = new InterfaceUsuario();
+
+string nomeJogador = interfaceUsuario.BoasVindas();
+
+int opcao;
+
+do
+{
+	opcao = interfaceUsuario.ExibirMenuPrincipal(nomeJogador);
+
+	switch (opcao)
+	{
+		case 1:
+			Console.WriteLine("Menu de adoção de mascotes.");
+			break;
+
+		case 2:
+			Console.WriteLine("Lista de mascotes adotados.");
+			break;
+
+		case 3:
+			Console.WriteLine($"Até a proxima, {nomeJogador}!");
+			break;
+	}
+
+	if (opcao != 3)
+	{
+		Console.WriteLine();
+		Console.WriteLine("Pressione ENTER para continuar...");
+		Console.ReadLine();
+	}
+} while (opcao != 3);
+
+return;
 
 var client = new RestClient("https://pokeapi.co/api/v2/");
 
