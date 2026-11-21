@@ -1,11 +1,76 @@
 ﻿using RestSharp;
+using System.Text.Json;
 
-const string URL_API = "https://pokeapi.co/api/v2/";
 
-var client = new RestClient(URL_API);
+var client = new RestClient("https://pokeapi.co/api/v2/");
 
-var request = new RestRequest("pokemon/eevee", Method.Get);
+// 1. Consultar a lista de espécies
+var request = new RestRequest("pokemon-species?limit=2000", Method.Get);
 
 var response = await client.ExecuteAsync(request);
 
-Console.WriteLine(response.Content);
+if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
+{
+	Console.WriteLine("Erro ao consultar as espécies.");
+	return;
+}
+
+// 2. Interpretar o JSON recebido
+using var documento = JsonDocument.Parse(response.Content);
+
+var resultados = documento.RootElement.GetProperty("results");
+
+var idsDisponiveis = new HashSet<int>();
+
+// 3. Apresentar as opções ao jogador
+Console.WriteLine("================================");
+Console.WriteLine("     ESCOLHA SEU POKÉMON");
+Console.WriteLine("================================");
+
+foreach (var especie in resultados.EnumerateArray())
+{
+	string nome = especie.GetProperty("name").GetString()!;
+	string url = especie.GetProperty("url").GetString()!;
+
+	// Extrair o ID da URL da espécie
+	int id = int.Parse(url.TrimEnd('/').Split('/').Last());
+
+	idsDisponiveis.Add(id);
+
+	Console.WriteLine($"{id} - {nome}");
+}
+
+// 4. Receber e validar a escolha
+int escolha;
+
+while (true)
+{
+	Console.WriteLine();
+	Console.Write("Digite o ID do Pokémon desejado: ");
+
+	if (!int.TryParse(Console.ReadLine(), out escolha) ||
+		!idsDisponiveis.Contains(escolha))
+	{
+		Console.WriteLine("ID inválido. Tente novamente.");
+		continue;
+	}
+
+	break;
+}
+
+// 5. Consultar os dados do Pokémon escolhido
+var pokemonRequest = new RestRequest($"pokemon/{escolha}", Method.Get);
+
+var pokemonResponse = await client.ExecuteAsync(pokemonRequest);
+
+// 6. Exibir as características
+if (pokemonResponse.IsSuccessful &&
+	!string.IsNullOrWhiteSpace(pokemonResponse.Content))
+{
+	Console.WriteLine("\nPokémon selecionado:");
+	Console.WriteLine(pokemonResponse.Content);
+}
+else
+{
+	Console.WriteLine("Não foi possível consultar o Pokémon.");
+}
