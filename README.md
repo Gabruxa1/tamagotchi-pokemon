@@ -2,7 +2,7 @@
 
 Projeto desenvolvido em C# com integração à [PokéAPI](https://pokeapi.co/), com o objetivo de construir uma aplicação de console inspirada em mascotes virtuais Pokémon.
 
-O desenvolvimento é organizado em etapas, utilizando conceitos de programação orientada a objetos, consumo de APIs REST, manipulação de JSON e modelagem de dados.
+O desenvolvimento é organizado em etapas, utilizando conceitos de programação orientada a objetos, consumo de APIs REST, manipulação de JSON, mapeamento de objetos e modelagem de dados.
 
 ## 🚀 Etapas do desenvolvimento
 
@@ -12,7 +12,7 @@ O desenvolvimento é organizado em etapas, utilizando conceitos de programação
 
 Implementação da integração com a PokéAPI para consultar e apresentar o catálogo de espécies disponíveis.
 
-Funcionalidades implementadas:
+**Funcionalidades implementadas:**
 
 - Configuração do cliente HTTP utilizando RestSharp.
 - Consulta ao endpoint `pokemon-species`.
@@ -36,11 +36,11 @@ GET https://pokeapi.co/api/v2/pokemon/{id}
 
 Implementação da conversão da resposta JSON da PokéAPI em objetos C# utilizando `System.Text.Json`.
 
-Funcionalidades implementadas:
+**Funcionalidades implementadas:**
 
 - Criação de classes para representar os dados retornados pela API.
 - Mapeamento das propriedades JSON utilizando `JsonPropertyName`.
-- Desserialização da resposta com `JsonSerializer.Deserialize<Mascote>()`.
+- Desserialização da resposta com `JsonSerializer.Deserialize<Mascote>()`, posteriormente reorganizada na Etapa 6 para utilizar o modelo `Pokemon`.
 - Representação de objetos aninhados.
 - Modelagem de listas de habilidades.
 - Identificação de habilidades e suas propriedades.
@@ -53,20 +53,24 @@ Funcionalidades implementadas:
 - Peso.
 - Lista de habilidades.
 
-**Estrutura dos modelos:**
+**Estrutura dos modelos na implementação atual:**
 
 ```text
 Models/
+├── Pokemon.cs
 ├── Mascote.cs
 ├── AbilitySlot.cs
-└── AbilityInfo.cs
+├── AbilityInfo.cs
+└── EspeciePokemon.cs
 ```
 
 **Relacionamento entre os modelos:**
 
-- `Mascote`: representa os dados principais do Pokémon.
+- `Pokemon`: representa os dados detalhados recebidos da PokéAPI.
+- `Mascote`: representa o mascote utilizado pelo domínio do jogo.
 - `AbilitySlot`: representa cada habilidade e suas propriedades.
 - `AbilityInfo`: representa os dados internos de cada habilidade, incluindo nome e URL.
+- `EspeciePokemon`: representa os dados básicos das espécies disponíveis para seleção.
 
 ### Etapa 3 — Interface, menu e sistema de adoção
 
@@ -74,7 +78,7 @@ Models/
 
 Implementação da interface interativa do jogo, permitindo identificar o jogador, navegar pelo menu principal, consultar Pokémon e realizar adoções.
 
-Funcionalidades implementadas:
+**Funcionalidades implementadas:**
 
 - Tela inicial com apresentação do jogo.
 - Solicitação e validação do nome do jogador.
@@ -100,83 +104,13 @@ A partir da Etapa 4, essas classes foram reorganizadas em camadas específicas, 
 
 **Observação:** os mascotes adotados são armazenados apenas durante a execução da aplicação. Os dados ainda não são persistidos em arquivos ou banco de dados.
 
-## 🛠️ Tecnologias utilizadas
-
-| Tecnologia         | Aplicação                      |
-| ------------------ | ------------------------------ |
-| C#                 | Linguagem de programação       |
-| .NET 10            | Plataforma de desenvolvimento  |
-| RestSharp 114.1.0  | Consumo de APIs REST           |
-| System.Text.Json   | Leitura e desserialização JSON |
-| PokéAPI            | Fonte dos dados dos Pokémon    |
-| Visual Studio Code | Ambiente de desenvolvimento    |
-| Git e GitHub       | Controle de versão             |
-
-## 📁 Estrutura do projeto
-
-```text
-tamagotchi-pokemon/
-│
-├── Controllers/
-│   └── TamagotchiController.cs
-│
-├── Models/
-│   ├── Mascote.cs
-│   ├── AbilitySlot.cs
-│   ├── AbilityInfo.cs
-│   └── EspeciePokemon.cs
-│
-├── Services/
-│   └── ServicoPokemon.cs
-│
-├── Views/
-│   └── InterfaceUsuario.cs
-│
-├── Program.cs
-├── tamagotchi-pokemon.csproj
-├── README.md
-└── .gitignore
-```
-
-**Responsabilidade dos diretórios:**
-
-- `Controllers/`: controle do fluxo e das funcionalidades do jogo.
-- `Models/`: representação dos dados e entidades.
-- `Services/`: integração com serviços externos, como a PokéAPI.
-- `Views/`: interface de comunicação com o jogador.
-
-Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não são versionados.
-
-## ▶️ Como executar
-
-**Pré-requisito:** .NET 10 SDK instalado.
-
-Clone o repositório e acesse o diretório do projeto:
-
-```bash
-git clone URL_DO_REPOSITORIO
-cd tamagotchi-pokemon
-```
-
-Restaure as dependências:
-
-```bash
-dotnet restore
-```
-
-Execute a aplicação:
-
-```bash
-dotnet run
-```
-
 ### Etapa 4 — Organização da arquitetura MVC
 
 **Status:** Concluída.
 
 Reorganização da estrutura do projeto utilizando os conceitos do padrão arquitetural MVC (Model-View-Controller), separando as responsabilidades entre as classes.
 
-Funcionalidades e melhorias implementadas:
+**Funcionalidades e melhorias implementadas:**
 
 - Criação da camada `Controllers` para centralizar o controle do jogo.
 - Criação da camada `Views` para organizar a interface com o jogador.
@@ -191,7 +125,7 @@ Funcionalidades e melhorias implementadas:
 
 **Responsabilidades das camadas:**
 
-- `Models`: representação dos dados dos Pokémon.
+- `Models`: representação dos dados e entidades do jogo.
 - `Views`: interação com o jogador, menus e apresentação das informações.
 - `Controllers`: coordenação do fluxo do jogo e das regras de interação.
 - `Services`: comunicação com a PokéAPI e processamento das respostas externas.
@@ -249,18 +183,146 @@ Os três atributos utilizam uma escala de 0 a 10 e recebem valores iniciais alea
 
 **Observação:** os atributos e estados dos mascotes permanecem em memória durante a execução da aplicação. A persistência dos dados ainda não foi implementada.
 
+### Etapa 6 — Mapeamento de objetos com AutoMapper
+
+**Status:** Concluída.
+
+Implementação do mapeamento automático entre os objetos que representam os dados recebidos da PokéAPI e os objetos utilizados pelo domínio do jogo.
+
+**Funcionalidades implementadas:**
+
+- Instalação da biblioteca AutoMapper 17.0.0.
+- Criação do modelo `Pokemon` para representar a resposta detalhada da PokéAPI.
+- Separação entre o modelo de dados externos (`Pokemon`) e o modelo de domínio (`Mascote`).
+- Atualização do serviço `ServicoPokemon` para desserializar as respostas em objetos `Pokemon`.
+- Criação do diretório `Mappings` para centralizar as configurações de mapeamento.
+- Implementação de `PokemonMappingProfile` utilizando `Profile`.
+- Configuração do mapeamento entre `Pokemon` e `Mascote`.
+- Preservação dos atributos de necessidades do mascote durante o mapeamento.
+- Integração do `IMapper` ao `TamagotchiController`.
+- Validação da configuração do AutoMapper com `AssertConfigurationIsValid()`.
+
+**Fluxo de conversão dos dados:**
+
+```text
+PokéAPI
+   ↓
+Resposta JSON
+   ↓
+Desserialização com System.Text.Json
+   ↓
+Modelo Pokemon
+   ↓
+AutoMapper
+   ↓
+Modelo Mascote
+   ↓
+Regras de negócio e interações do jogo
+```
+
+**Responsabilidades dos modelos:**
+
+- `Pokemon`: representa os dados recebidos da PokéAPI, incluindo nome, altura, peso e habilidades.
+- `Mascote`: representa o mascote no domínio do jogo, mantendo os dados do Pokémon e os atributos próprios de alimentação, humor e energia.
+- `PokemonMappingProfile`: define as regras de conversão entre `Pokemon` e `Mascote`.
+
+**Configuração do mapeamento:**
+
+O AutoMapper realiza a correspondência automática das propriedades com nomes compatíveis entre os modelos.
+
+Os atributos `Alimentacao`, `Humor` e `Energia` não existem na resposta da PokéAPI. Por isso, são ignorados explicitamente durante o mapeamento, preservando os valores inicializados pelo construtor de `Mascote`.
+
+**Observação:** a validação da configuração do AutoMapper permite identificar propriedades sem mapeamento, garantindo maior consistência na conversão entre os objetos.
+
+## 🛠️ Tecnologias utilizadas
+
+| Tecnologia         | Aplicação                      |
+| ------------------ | ------------------------------ |
+| C#                 | Linguagem de programação       |
+| .NET 10            | Plataforma de desenvolvimento  |
+| RestSharp 114.1.0  | Consumo de APIs REST           |
+| System.Text.Json   | Leitura e desserialização JSON |
+| AutoMapper 17.0.0  | Mapeamento entre objetos C#    |
+| PokéAPI            | Fonte dos dados dos Pokémon    |
+| Visual Studio Code | Ambiente de desenvolvimento    |
+| Git e GitHub       | Controle de versão             |
+
+## 📁 Estrutura do projeto
+
+```text
+tamagotchi-pokemon/
+│
+├── Controllers/
+│   └── TamagotchiController.cs
+│
+├── Mappings/
+│   └── PokemonMappingProfile.cs
+│
+├── Models/
+│   ├── Mascote.cs
+│   ├── Pokemon.cs
+│   ├── AbilitySlot.cs
+│   ├── AbilityInfo.cs
+│   └── EspeciePokemon.cs
+│
+├── Services/
+│   └── ServicoPokemon.cs
+│
+├── Views/
+│   └── InterfaceUsuario.cs
+│
+├── Program.cs
+├── tamagotchi-pokemon.csproj
+├── README.md
+└── .gitignore
+```
+
+**Responsabilidade dos diretórios:**
+
+- `Controllers/`: controle do fluxo e das funcionalidades do jogo.
+- `Mappings/`: configura as conversões entre os modelos de dados e os modelos de domínio.
+- `Models/`: representação dos dados e entidades.
+- `Services/`: integração com serviços externos, como a PokéAPI.
+- `Views/`: interface de comunicação com o jogador.
+
+Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não são versionados.
+
+## ▶️ Como executar
+
+**Pré-requisito:** .NET 10 SDK instalado.
+
+Clone o repositório e acesse o diretório do projeto:
+
+```bash
+git clone URL_DO_REPOSITORIO
+cd tamagotchi-pokemon
+```
+
+Restaure as dependências:
+
+```bash
+dotnet restore
+```
+
+Execute a aplicação:
+
+```bash
+dotnet run
+```
+
 ## 🌱 Organização das branches
 
 O desenvolvimento é separado por etapas, mantendo a branch `main` como referência principal do projeto.
 
-| Branch                         | Etapa                                 |
-| ------------------------------ | ------------------------------------- |
-| `main`                         | Versão principal                      |
-| `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID       |
-| `etapa-2-desserializacao-json` | Modelagem e desserialização JSON      |
-| `etapa-3-interface-adocao`     | Interface, menu e sistema de adoção   |
-| `etapa-4-arquitetura-mvc`      | Organização da arquitetura MVC        |
-| `etapa-5-interacao-mascotes`   | Interação e necessidades dos mascotes |
+| Branch                          | Etapa                                 |
+| ------------------------------- | ------------------------------------- |
+| `main`                          | Versão principal                      |
+| `etapa-1-consulta-pokeapi`      | Consulta à API e seleção por ID       |
+| `etapa-2-desserializacao-json`  | Modelagem e desserialização JSON      |
+| `etapa-3-interface-adocao`      | Interface, menu e sistema de adoção   |
+| `etapa-4-arquitetura-mvc`       | Organização da arquitetura MVC        |
+| `etapa-5-interacao-mascotes`    | Interação e necessidades dos mascotes |
+| `etapa-6-mapeamento-automapper` | Mapeamento de objetos com AutoMapper  |
 
 ## 📌 Próximas etapas
 
@@ -273,6 +335,6 @@ As funcionalidades abaixo fazem parte do planejamento e ainda não foram impleme
 
 ## 🎯 Objetivo do projeto
 
-Construir progressivamente uma aplicação de mascote virtual Pokémon, aplicando conceitos de desenvolvimento C#, integração com APIs, orientação a objetos, manipulação de dados e organização de software.
+Construir progressivamente uma aplicação de mascote virtual Pokémon, aplicando conceitos de desenvolvimento C#, integração com APIs, orientação a objetos, manipulação de dados, mapeamento de objetos e organização de software.
 
 O projeto possui caráter educacional e cada etapa é desenvolvida e validada individualmente.

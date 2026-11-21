@@ -1,6 +1,9 @@
 using tamagotchi_pokemon.Models;
 using tamagotchi_pokemon.Services;
 using tamagotchi_pokemon.Views;
+using AutoMapper;
+using tamagotchi_pokemon.Mappings;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace tamagotchi_pokemon.Controllers;
 
@@ -8,12 +11,23 @@ public class TamagotchiController
 {
 	private readonly InterfaceUsuario _interfaceUsuario;
 	private readonly ServicoPokemon _servicoPokemon;
+	private readonly IMapper _mapper;
 	private readonly List<Mascote> _mascotesAdotados = new();
+
 
 	public TamagotchiController()
 	{
 		_interfaceUsuario = new InterfaceUsuario();
 		_servicoPokemon = new ServicoPokemon();
+
+		var configuration = new MapperConfiguration(cfg =>
+		{
+			cfg.AddProfile<PokemonMappingProfile>();
+		}, NullLoggerFactory.Instance);
+
+		_mapper = configuration.CreateMapper();
+		_mapper.ConfigurationProvider.AssertConfigurationIsValid();
+
 	}
 
 	public async Task Jogar()
@@ -69,15 +83,17 @@ public class TamagotchiController
 				return;
 			}
 
-			Mascote? mascote = await _servicoPokemon.ObterPokemonAsync(
+			Pokemon? pokemon = await _servicoPokemon.ObterPokemonAsync(
 				idSelecionado.Value
 			);
 
-			if (mascote == null)
+			if (pokemon == null)
 			{
 				Console.WriteLine("Não foi possível consultar este Pokémon.");
 				return;
 			}
+
+			Mascote mascote = _mapper.Map<Mascote>(pokemon);
 
 			if (_interfaceUsuario.DesejaVerDetalhes())
 			{

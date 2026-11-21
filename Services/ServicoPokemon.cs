@@ -48,7 +48,7 @@ public class ServicoPokemon
 		return especies;
 	}
 
-	public async Task<Mascote?> ObterPokemonAsync(int id)
+	public async Task<Pokemon?> ObterPokemonAsync(int id)
 	{
 		var request = new RestRequest($"pokemon/{id}", Method.Get);
 
@@ -60,10 +60,10 @@ public class ServicoPokemon
 			return null;
 		}
 
-		Mascote? mascote = JsonSerializer.Deserialize<Mascote>(
-			response.Content
+		Pokemon? pokemon = JsonSerializer.Deserialize<Pokemon>(
+				response.Content
 		);
 
-		return mascote;
+		return pokemon;
 	}
 }
