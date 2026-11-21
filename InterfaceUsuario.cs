@@ -1,4 +1,5 @@
 
+using tamagotchi_pokemon.Models;
 namespace tamagotchi_pokemon;
 
 public class InterfaceUsuario
@@ -70,5 +71,160 @@ public class InterfaceUsuario
 
 			return opcao;
 		}
+	}
+
+	public int? SelecionarEspecie(List<EspeciePokemon> especies)
+	{
+		int escolha;
+
+		while (true)
+		{
+			Console.Clear();
+
+			Console.WriteLine("========================================");
+			Console.WriteLine("          ADOÇÃO DE MASCOTES");
+			Console.WriteLine("========================================");
+			Console.WriteLine();
+
+			foreach (var especie in especies)
+			{
+				Console.WriteLine($"{especie.Id} - {especie.Nome.ToUpper()}");
+			}
+
+			Console.WriteLine();
+			Console.WriteLine("[0] Voltar ao menu principal");
+			Console.WriteLine();
+			Console.Write("Digite o ID da espécie desejada: ");
+
+			if (!int.TryParse(Console.ReadLine(), out escolha))
+			{
+				Console.WriteLine("Entrada inválida!");
+				Console.WriteLine("Pressione ENTER para continuar...");
+				Console.ReadLine();
+				continue;
+			}
+
+			if (escolha == 0)
+			{
+				return null;
+			}
+
+			if (!especies.Any(e => e.Id == escolha))
+			{
+				Console.WriteLine("Espécie não encontrada!");
+				Console.WriteLine("Pressione ENTER para continuar...");
+				Console.ReadLine();
+				continue;
+			}
+
+			return escolha;
+		}
+	}
+
+	public void ExibirDetalhesPokemon(Mascote mascote)
+	{
+		Console.Clear();
+
+		Console.WriteLine("========================================");
+		Console.WriteLine("          DETALHES DO MASCOTE");
+		Console.WriteLine("========================================");
+		Console.WriteLine();
+
+		Console.WriteLine($"Nome: {mascote.Name.ToUpper()}");
+		Console.WriteLine($"Altura: {mascote.Height}");
+		Console.WriteLine($"Peso: {mascote.Weight}");
+
+		Console.WriteLine();
+		Console.WriteLine("Habilidades:");
+
+		foreach (var habilidade in mascote.Abilities)
+		{
+			Console.WriteLine($"- {habilidade.Ability.Name.ToUpper()}");
+		}
+
+		Console.WriteLine();
+	}
+
+	public bool DesejaVerDetalhes()
+	{
+		while (true)
+		{
+			Console.WriteLine();
+			Console.WriteLine("Deseja conhecer as características deste Pokémon?");
+			Console.WriteLine("[1] Sim, mostrar detalhes");
+			Console.WriteLine("[2] Não, quero continuar");
+			Console.Write("Sua escolha: ");
+
+			string resposta = Console.ReadLine() ?? string.Empty;
+
+			if (resposta == "1")
+			{
+				return true;
+			}
+
+			if (resposta == "2")
+			{
+				return false;
+			}
+
+			Console.WriteLine("Opção inválida! Escolha 1 ou 2.");
+		}
+	}
+	public bool ConfirmarAdocao(string nomePokemon)
+	{
+		string resposta;
+
+		while (true)
+		{
+			Console.WriteLine();
+			Console.WriteLine("========================================");
+			Console.WriteLine($"Deseja adotar {nomePokemon.ToUpper()}?");
+			Console.WriteLine("========================================");
+			Console.WriteLine("[1] Sim, quero adotar!");
+			Console.WriteLine("[2] Não, cancelar adoção");
+			Console.WriteLine();
+			Console.Write("Sua escolha: ");
+
+			resposta = Console.ReadLine() ?? string.Empty;
+
+			if (resposta == "1")
+			{
+				return true;
+			}
+
+			if (resposta == "2")
+			{
+				return false;
+			}
+
+			Console.WriteLine("Opção inválida! Escolha 1 ou 2.");
+		}
+	}
+	public void ExibirMascotesAdotados(List<Mascote> mascotesAdotados)
+	{
+		Console.Clear();
+
+		Console.WriteLine("========================================");
+		Console.WriteLine("          MEUS MASCOTES");
+		Console.WriteLine("========================================");
+		Console.WriteLine();
+
+		if (!mascotesAdotados.Any())
+		{
+			Console.WriteLine("Você ainda não adotou nenhum Pokémon.");
+			return;
+		}
+
+		for (int i = 0; i < mascotesAdotados.Count; i++)
+		{
+			var mascote = mascotesAdotados[i];
+
+			Console.WriteLine($"{i + 1}. {mascote.Name.ToUpper()}");
+			Console.WriteLine($"   Altura: {mascote.Height}");
+			Console.WriteLine($"   Peso: {mascote.Weight}");
+			Console.WriteLine();
+		}
+
+		Console.WriteLine($"Total de mascotes adotados: {mascotesAdotados.Count}");
 	}
 }

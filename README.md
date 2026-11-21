@@ -23,13 +23,10 @@ Funcionalidades implementadas:
 - Validação da entrada utilizando `int.TryParse` e `HashSet<int>`.
 - Consulta dos dados individuais pelo endpoint `pokemon/{id}`.
 
-**Endpoint utilizado:**
+**Endpoints utilizados:**
 
 ```http
 GET https://pokeapi.co/api/v2/pokemon-species?limit=2000
-```
-
-```http
 GET https://pokeapi.co/api/v2/pokemon/{id}
 ```
 
@@ -71,19 +68,35 @@ Models/
 - `AbilitySlot`: representa cada habilidade e suas propriedades.
 - `AbilityInfo`: representa os dados internos de cada habilidade, incluindo nome e URL.
 
-**Exemplo de resultado:**
+### Etapa 3 — Interface, menu e sistema de adoção
 
-```text
-Pokémon selecionado:
-Nome: eevee
-Altura: 3
-Peso: 65
+**Status:** Concluída.
 
-Habilidades:
-RUN-AWAY
-ADAPTABILITY
-ANTICIPATION
-```
+Implementação da interface interativa do jogo, permitindo identificar o jogador, navegar pelo menu principal, consultar Pokémon e realizar adoções.
+
+Funcionalidades implementadas:
+
+- Tela inicial com apresentação do jogo.
+- Solicitação e validação do nome do jogador.
+- Menu principal com opções de adoção, consulta da coleção e saída.
+- Consulta do catálogo de espécies pela PokéAPI.
+- Seleção de Pokémon pelo ID.
+- Opção de visualizar as características antes da adoção.
+- Exibição dos detalhes do Pokémon selecionado.
+- Confirmação ou cancelamento da adoção.
+- Armazenamento dos Pokémon adotados em uma coleção `List<Mascote>`.
+- Listagem dos mascotes adotados, incluindo nome, altura e peso.
+- Exibição da quantidade total de mascotes adotados.
+- Tratamento de exceções durante o processo de adoção.
+
+**Organização das classes:**
+
+- `Program.cs`: coordena o fluxo principal da aplicação e mantém a coleção de mascotes adotados.
+- `InterfaceUsuario.cs`: concentra a interação com o jogador, menus e exibição de informações.
+- `ServicoPokemon.cs`: centraliza as consultas à PokéAPI.
+- `EspeciePokemon.cs`: representa os dados básicos das espécies disponíveis para seleção.
+
+**Observação:** os mascotes adotados são armazenados apenas durante a execução da aplicação. Os dados ainda não são persistidos em arquivos ou banco de dados.
 
 ## 🛠️ Tecnologias utilizadas
 
@@ -105,9 +118,12 @@ tamagotchi-pokemon/
 ├── Models/
 │   ├── Mascote.cs
 │   ├── AbilitySlot.cs
-│   └── AbilityInfo.cs
+│   ├── AbilityInfo.cs
+│   └── EspeciePokemon.cs
 │
 ├── Program.cs
+├── InterfaceUsuario.cs
+├── ServicoPokemon.cs
 ├── tamagotchi-pokemon.csproj
 ├── README.md
 └── .gitignore
@@ -117,7 +133,7 @@ Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não sã
 
 ## ▶️ Como executar
 
-Pré-requisito: .NET 10 SDK instalado.
+**Pré-requisito:** .NET 10 SDK instalado.
 
 Clone o repositório e acesse o diretório do projeto:
 
@@ -142,23 +158,23 @@ dotnet run
 
 O desenvolvimento é separado por etapas, mantendo a branch `main` como referência principal do projeto.
 
-| Branch                         | Etapa                            |
-| ------------------------------ | -------------------------------- |
-| `main`                         | Versão principal                 |
-| `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID  |
-| `etapa-2-desserializacao-json` | Modelagem e desserialização JSON |
+| Branch                         | Etapa                               |
+| ------------------------------ | ----------------------------------- |
+| `main`                         | Versão principal                    |
+| `etapa-1-consulta-pokeapi`     | Consulta à API e seleção por ID     |
+| `etapa-2-desserializacao-json` | Modelagem e desserialização JSON    |
+| `etapa-3-interface-adocao`     | Interface, menu e sistema de adoção |
 
 ## 📌 Próximas etapas
 
 As funcionalidades abaixo fazem parte do planejamento e ainda não foram implementadas:
 
-- [ ] Tratamento aprimorado de erros e respostas da API.
-- [ ] Consulta de múltiplos Pokémon antes da adoção.
-- [ ] Sistema de adoção do mascote.
+- [ ] Persistência dos mascotes adotados.
 - [ ] Sistema de alimentação e necessidades.
 - [ ] Sistema de felicidade e amizade.
 - [ ] Mecânicas de evolução.
-- [ ] Persistência dos dados do mascote.
+- [ ] Interações com os mascotes.
+- [ ] Aprimoramento da navegação e apresentação do catálogo.
 
 ## 🎯 Objetivo do projeto
 
