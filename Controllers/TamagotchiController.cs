@@ -4,6 +4,7 @@ using tamagotchi_pokemon.Views;
 using AutoMapper;
 using tamagotchi_pokemon.Mappings;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Text.Json;
 
 namespace tamagotchi_pokemon.Controllers;
 
@@ -12,13 +13,15 @@ public class TamagotchiController
 	private readonly InterfaceUsuario _interfaceUsuario;
 	private readonly ServicoPokemon _servicoPokemon;
 	private readonly IMapper _mapper;
-	private readonly List<Mascote> _mascotesAdotados = new();
+	private EstadoJogo _estadoJogo = new();
+	private readonly ServicoPersistencia _servicoPersistencia;
 
 
 	public TamagotchiController()
 	{
 		_interfaceUsuario = new InterfaceUsuario();
 		_servicoPokemon = new ServicoPokemon();
+		_servicoPersistencia = new ServicoPersistencia();
 
 		var configuration = new MapperConfiguration(cfg =>
 		{
@@ -30,15 +33,38 @@ public class TamagotchiController
 
 	}
 
+
 	public async Task Jogar()
 	{
-		string nomeJogador = _interfaceUsuario.BoasVindas();
+		try
+		{
+			_estadoJogo = await _servicoPersistencia.CarregarAsync();
+		}
+		catch (JsonException)
+		{
+			Console.WriteLine("Erro: o arquivo de persistência está corrompido.");
+			Console.WriteLine("Os dados existentes foram preservados.");
+			return;
+		}
+
+		_interfaceUsuario.ExibirBoasVindas();
+
+		if (string.IsNullOrWhiteSpace(_estadoJogo.NomeTreinador))
+		{
+			_estadoJogo.NomeTreinador =
+				_interfaceUsuario.SolicitarNomeTreinador();
+
+			await _servicoPersistencia.SalvarAsync(_estadoJogo);
+		}
+
+		string nomeJogador = _estadoJogo.NomeTreinador;
 
 		int opcao;
 
 		do
 		{
 			opcao = _interfaceUsuario.ExibirMenuPrincipal(nomeJogador);
+
 			switch (opcao)
 			{
 				case 1:
@@ -46,11 +72,13 @@ public class TamagotchiController
 					break;
 
 				case 2:
-					_interfaceUsuario.ExibirMascotesAdotados(_mascotesAdotados);
+					_interfaceUsuario.ExibirMascotesAdotados(
+						_estadoJogo.Mascotes
+					);
 					break;
 
 				case 3:
-					InteragirComMascote();
+					await InteragirComMascote();
 					break;
 
 				case 4:
@@ -102,7 +130,9 @@ public class TamagotchiController
 
 			if (_interfaceUsuario.ConfirmarAdocao(mascote.Name))
 			{
-				_mascotesAdotados.Add(mascote);
+				_estadoJogo.Mascotes.Add(mascote);
+
+				await _servicoPersistencia.SalvarAsync(_estadoJogo);
 
 				Console.WriteLine();
 				Console.WriteLine($"{mascote.Name.ToUpper()} foi adotado com sucesso!");
@@ -119,10 +149,10 @@ public class TamagotchiController
 		}
 	}
 
-	private void InteragirComMascote()
+	private async Task InteragirComMascote()
 	{
 		int? indiceSelecionado = _interfaceUsuario.SelecionarMascote(
-				_mascotesAdotados
+				_estadoJogo.Mascotes
 		);
 
 		if (indiceSelecionado == null)
@@ -130,13 +160,15 @@ public class TamagotchiController
 			return;
 		}
 
-		Mascote mascote = _mascotesAdotados[indiceSelecionado.Value];
+		Mascote mascote = _estadoJogo.Mascotes[indiceSelecionado.Value];
 
 		int opcao;
 
 		do
 		{
+
 			opcao = _interfaceUsuario.ExibirMenuInteracao(mascote);
+			bool houveAlteracao = false;
 
 			switch (opcao)
 			{
@@ -147,6 +179,7 @@ public class TamagotchiController
 				case 2:
 					if (mascote.Brincar())
 					{
+						houveAlteracao = true;
 						Console.WriteLine($"{mascote.Name} brincou e se divertiu!");
 					}
 					else
@@ -160,6 +193,7 @@ public class TamagotchiController
 				case 3:
 					if (mascote.Alimentar())
 					{
+						houveAlteracao = true;
 						Console.WriteLine($"{mascote.Name} recebeu comida!");
 					}
 					else
@@ -171,6 +205,7 @@ public class TamagotchiController
 				case 4:
 					if (mascote.Dormir())
 					{
+						houveAlteracao = true;
 						Console.WriteLine($"{mascote.Name} foi dormir!");
 					}
 					else
@@ -178,6 +213,11 @@ public class TamagotchiController
 						Console.WriteLine($"{mascote.Name} já está completamente descansado!");
 					}
 					break;
+			}
+
+			if (houveAlteracao)
+			{
+				await _servicoPersistencia.SalvarAsync(_estadoJogo);
 			}
 
 			if (opcao != 5)

@@ -234,6 +234,57 @@ Os atributos `Alimentacao`, `Humor` e `Energia` não existem na resposta da Pok�
 
 **Observação:** a validação da configuração do AutoMapper permite identificar propriedades sem mapeamento, garantindo maior consistência na conversão entre os objetos.
 
+### Etapa 7 — Persistência JSON e estado da partida
+
+**Status:** Concluída.
+
+Implementação de um mecanismo de persistência local utilizando arquivos JSON, permitindo salvar e recuperar o estado da partida entre diferentes execuções da aplicação.
+
+**Funcionalidades implementadas:**
+
+- Criação do modelo `EstadoJogo` para centralizar os dados da partida.
+- Armazenamento do nome do treinador e da coleção de mascotes adotados.
+- Implementação do serviço `ServicoPersistencia` para leitura e gravação dos dados.
+- Utilização de `System.Text.Json` para serialização e desserialização.
+- Armazenamento dos dados em `jogo.json`.
+- Definição do diretório de persistência utilizando `Environment.SpecialFolder.LocalApplicationData`.
+- Criação automática do diretório de armazenamento quando necessário.
+- Recuperação automática dos dados ao iniciar a aplicação.
+- Salvamento do nome do treinador e dos mascotes adotados.
+- Atualização da persistência após interações que modificam os atributos dos mascotes.
+- Utilização de arquivo temporário para realizar a gravação antes da substituição do arquivo principal.
+- Preservação do arquivo original quando ocorre erro de desserialização.
+
+**Modelo de estado da partida:**
+
+O modelo `EstadoJogo` centraliza as informações necessárias para recuperar a partida:
+
+- `NomeTreinador`: armazena o nome do treinador.
+- `Mascotes`: mantém a coleção de Pokémon adotados, incluindo seus dados, habilidades e atributos de interação.
+
+**Localização dos dados no Linux:**
+
+O arquivo de persistência é armazenado no diretório de dados locais do usuário:
+
+```text
+~/.local/share/tamagotchi-pokemon/jogo.json
+```
+
+**Testes automatizados:**
+
+Implementação de testes unitários utilizando xUnit para validar:
+
+- Carregamento quando o arquivo ainda não existe.
+- Salvamento e recuperação dos dados completos da partida.
+- Tratamento de arquivos JSON corrompidos.
+- Preservação do arquivo original em caso de erro.
+- Criação automática do diretório e remoção do arquivo temporário.
+- Validação de argumentos nulos.
+
+**Validação:** os seis testes automatizados foram executados com sucesso, sem falhas.
+
+**Observação:** a persistência utiliza arquivos JSON locais, sem necessidade de banco de dados ou dependências adicionais para armazenamento.
+
 ## 🛠️ Tecnologias utilizadas
 
 | Tecnologia         | Aplicação                      |
@@ -261,15 +312,22 @@ tamagotchi-pokemon/
 ├── Models/
 │   ├── Mascote.cs
 │   ├── Pokemon.cs
+│   ├── EstadoJogo.cs
 │   ├── AbilitySlot.cs
 │   ├── AbilityInfo.cs
 │   └── EspeciePokemon.cs
 │
 ├── Services/
-│   └── ServicoPokemon.cs
+│   ├── ServicoPokemon.cs
+│   └── ServicoPersistencia.cs
 │
 ├── Views/
 │   └── InterfaceUsuario.cs
+│
+├── tests/
+│   └── tamagotchi-pokemon.Tests/
+│       ├── ServicoPersistenciaTests.cs
+│       └── tamagotchi-pokemon.Tests.csproj
 │
 ├── Program.cs
 ├── tamagotchi-pokemon.csproj
@@ -282,8 +340,9 @@ tamagotchi-pokemon/
 - `Controllers/`: controle do fluxo e das funcionalidades do jogo.
 - `Mappings/`: configura as conversões entre os modelos de dados e os modelos de domínio.
 - `Models/`: representação dos dados e entidades.
-- `Services/`: integração com serviços externos, como a PokéAPI.
+- `Services/`: integração com serviços externos e persistência dos dados locais.
 - `Views/`: interface de comunicação com o jogador.
+- `tests/`: projetos de testes automatizados.
 
 Os diretórios `bin/` e `obj/` são gerados automaticamente pelo .NET e não são versionados.
 
@@ -323,14 +382,17 @@ O desenvolvimento é separado por etapas, mantendo a branch `main` como referên
 | `etapa-4-arquitetura-mvc`       | Organização da arquitetura MVC        |
 | `etapa-5-interacao-mascotes`    | Interação e necessidades dos mascotes |
 | `etapa-6-mapeamento-automapper` | Mapeamento de objetos com AutoMapper  |
+| `etapa-7-persistencia-json`     | Persistência JSON e estado da partida |
 
 ## 📌 Próximas etapas
 
 As funcionalidades abaixo fazem parte do planejamento e ainda não foram implementadas:
 
-- [ ] Persistência dos mascotes adotados.
-- [ ] Sistema de amizade e evolução.
+- [ ] Sistema de passagem de tempo.
+- [ ] Sistema de amizade.
 - [ ] Mecânicas de evolução dos Pokémon.
+- [ ] Sistema de inventário.
+- [ ] Histórico de atividades.
 - [ ] Aprimoramento da navegação e apresentação do catálogo.
 
 ## 🎯 Objetivo do projeto

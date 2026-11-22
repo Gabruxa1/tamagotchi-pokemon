@@ -4,7 +4,8 @@ namespace tamagotchi_pokemon.Views;
 
 public class InterfaceUsuario
 {
-	public string BoasVindas()
+
+	public void ExibirBoasVindas()
 	{
 		Console.Clear();
 
@@ -18,7 +19,11 @@ public class InterfaceUsuario
 		Console.WriteLine();
 		Console.WriteLine("  Um pequeno mundo espera por você!");
 		Console.WriteLine();
+	}
 
+
+	public string SolicitarNomeTreinador()
+	{
 		Console.Write("Digite seu nome, treinador(a): ");
 
 		string nome = Console.ReadLine() ?? string.Empty;
@@ -32,7 +37,7 @@ public class InterfaceUsuario
 		}
 
 		Console.WriteLine();
-		Console.WriteLine($"Olá, {nome}! Sua jornada está começando!");
+		Console.WriteLine($"Olá, {nome.Trim()}! Sua jornada está começando!");
 		Console.WriteLine();
 
 		return nome.Trim();
