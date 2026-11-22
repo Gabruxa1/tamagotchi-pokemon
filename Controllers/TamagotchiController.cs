@@ -15,6 +15,7 @@ public class TamagotchiController
 	private readonly IMapper _mapper;
 	private EstadoJogo _estadoJogo = new();
 	private readonly ServicoPersistencia _servicoPersistencia;
+	private readonly ServicoTempo _servicoTempo;
 
 
 	public TamagotchiController()
@@ -22,6 +23,7 @@ public class TamagotchiController
 		_interfaceUsuario = new InterfaceUsuario();
 		_servicoPokemon = new ServicoPokemon();
 		_servicoPersistencia = new ServicoPersistencia();
+		_servicoTempo = new ServicoTempo();
 
 		var configuration = new MapperConfiguration(cfg =>
 		{
@@ -46,6 +48,10 @@ public class TamagotchiController
 			Console.WriteLine("Os dados existentes foram preservados.");
 			return;
 		}
+
+		_servicoTempo.Atualizar(_estadoJogo);
+
+		await _servicoPersistencia.SalvarAsync(_estadoJogo);
 
 		_interfaceUsuario.ExibirBoasVindas();
 
@@ -130,6 +136,8 @@ public class TamagotchiController
 
 			if (_interfaceUsuario.ConfirmarAdocao(mascote.Name))
 			{
+				_servicoTempo.InicializarMascote(mascote);
+
 				_estadoJogo.Mascotes.Add(mascote);
 
 				await _servicoPersistencia.SalvarAsync(_estadoJogo);
@@ -166,8 +174,12 @@ public class TamagotchiController
 
 		do
 		{
-
 			opcao = _interfaceUsuario.ExibirMenuInteracao(mascote);
+
+			_servicoTempo.Atualizar(_estadoJogo);
+
+			await _servicoPersistencia.SalvarAsync(_estadoJogo);
+
 			bool houveAlteracao = false;
 
 			switch (opcao)

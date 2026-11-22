@@ -49,6 +49,10 @@ public class ServicoPersistenciaTests
 
 		var mascote = new Mascote
 		{
+			DesgasteAlimentacao = 0.5m,
+			DesgasteHumor = 0.2m,
+			DesgasteEnergia = 0.4m,
+			UltimaAtualizacaoUtc = new DateTimeOffset(2026, 11, 22, 12, 0, 0, TimeSpan.Zero),
 			Name = "pikachu",
 			Height = 4,
 			Weight = 60,
@@ -68,6 +72,7 @@ public class ServicoPersistenciaTests
 				Slot = 1
 			}
 		}
+
 		};
 
 		var estadoJogo = new EstadoJogo
@@ -115,7 +120,27 @@ public class ServicoPersistenciaTests
 			mascote.Abilities[0].Slot,
 			mascoteCarregado.Abilities[0].Slot
 		);
+		Assert.Equal(
+				mascote.DesgasteAlimentacao,
+				mascoteCarregado.DesgasteAlimentacao
+		);
+
+		Assert.Equal(
+				mascote.DesgasteHumor,
+				mascoteCarregado.DesgasteHumor
+		);
+
+		Assert.Equal(
+				mascote.DesgasteEnergia,
+				mascoteCarregado.DesgasteEnergia
+		);
+
+		Assert.Equal(
+				mascote.UltimaAtualizacaoUtc,
+				mascoteCarregado.UltimaAtualizacaoUtc
+		);
 	}
+
 	[Fact]
 	public async Task CarregarAsync_JsonCorrompido_LancaJsonException()
 	{

@@ -285,18 +285,65 @@ Implementação de testes unitários utilizando xUnit para validar:
 
 **Observação:** a persistência utiliza arquivos JSON locais, sem necessidade de banco de dados ou dependências adicionais para armazenamento.
 
+### Etapa 8 — Sistema de passagem de tempo
+
+**Status:** Concluída.
+
+Implementação de um sistema de passagem de tempo que atualiza automaticamente as necessidades dos mascotes, contabilizando o tempo transcorrido enquanto o jogo está aberto ou fechado.
+
+**Funcionalidades implementadas:**
+
+- Degradação automática dos atributos Alimentação, Humor e Energia.
+- Contabilização integral do tempo offline, sem limite artificial.
+- Utilização de timestamps individuais para cada mascote.
+- Armazenamento de frações de desgaste para evitar arredondamentos prematuros.
+- Atualização automática das necessidades ao iniciar o jogo e antes das interações.
+- Inicialização do timestamp no momento da adoção.
+- Compatibilidade com arquivos de persistência anteriores, sem aplicação retroativa de desgaste.
+- Reinicialização do timestamp quando o relógio do sistema retrocede.
+- Integração com a persistência JSON para salvar os acumuladores e timestamps.
+
+**Taxas de degradação:**
+
+Os atributos utilizam escala de 0 a 10 e permanecem representados por valores inteiros.
+
+| Necessidade | Degradação por hora | Tempo de 10 até 0 |
+| ----------- | ------------------- | ----------------- |
+| Alimentação | 0,5 ponto           | 20 horas          |
+| Humor       | 0,2 ponto           | 50 horas          |
+| Energia     | 0,4 ponto           | 25 horas          |
+
+**Controle temporal:**
+
+- Utilização de `TimeProvider` para abstrair o relógio do sistema.
+- Registro dos instantes em UTC com `DateTimeOffset`.
+- Acumuladores individuais do tipo `decimal` para preservar o desgaste fracionário.
+- Utilização de `FakeTimeProvider` nos testes para simular a passagem do tempo sem esperas reais.
+
+**Regras de interação:**
+
+- Brincar é bloqueado quando Alimentação ou Energia está zerada.
+- Ações de recuperação permanecem disponíveis conforme suas condições.
+- Quando uma necessidade chega a zero, seu excedente de desgaste é descartado.
+
+**Validação:** 21 testes automatizados executados com sucesso, sem falhas.
+
+**Observação:** cada mascote possui seu próprio controle temporal, permitindo contabilizar corretamente períodos diferentes desde sua adoção.
+
 ## 🛠️ Tecnologias utilizadas
 
-| Tecnologia         | Aplicação                      |
-| ------------------ | ------------------------------ |
-| C#                 | Linguagem de programação       |
-| .NET 10            | Plataforma de desenvolvimento  |
-| RestSharp 114.1.0  | Consumo de APIs REST           |
-| System.Text.Json   | Leitura e desserialização JSON |
-| AutoMapper 17.0.0  | Mapeamento entre objetos C#    |
-| PokéAPI            | Fonte dos dados dos Pokémon    |
-| Visual Studio Code | Ambiente de desenvolvimento    |
-| Git e GitHub       | Controle de versão             |
+| Tecnologia         | Aplicação                                   |
+| ------------------ | ------------------------------------------- |
+| C#                 | Linguagem de programação                    |
+| .NET 10            | Plataforma de desenvolvimento               |
+| RestSharp 114.1.0  | Consumo de APIs REST                        |
+| System.Text.Json   | Leitura e desserialização JSON              |
+| AutoMapper 17.0.0  | Mapeamento entre objetos C#                 |
+| TimeProvider       | Abstração do relógio para controle temporal |
+| FakeTimeProvider   | Simulação do tempo nos testes automatizados |
+| PokéAPI            | Fonte dos dados dos Pokémon                 |
+| Visual Studio Code | Ambiente de desenvolvimento                 |
+| Git e GitHub       | Controle de versão                          |
 
 ## 📁 Estrutura do projeto
 
@@ -319,14 +366,17 @@ tamagotchi-pokemon/
 │
 ├── Services/
 │   ├── ServicoPokemon.cs
-│   └── ServicoPersistencia.cs
+│   ├── ServicoPersistencia.cs
+│   └── ServicoTempo.cs
 │
 ├── Views/
 │   └── InterfaceUsuario.cs
 │
 ├── tests/
 │   └── tamagotchi-pokemon.Tests/
+│       ├── MascoteTests.cs
 │       ├── ServicoPersistenciaTests.cs
+│       ├── ServicoTempoTests.cs
 │       └── tamagotchi-pokemon.Tests.csproj
 │
 ├── Program.cs
@@ -383,12 +433,12 @@ O desenvolvimento é separado por etapas, mantendo a branch `main` como referên
 | `etapa-5-interacao-mascotes`    | Interação e necessidades dos mascotes |
 | `etapa-6-mapeamento-automapper` | Mapeamento de objetos com AutoMapper  |
 | `etapa-7-persistencia-json`     | Persistência JSON e estado da partida |
+| `etapa-8-passagem-tempo`        | Sistema de passagem de tempo          |
 
 ## 📌 Próximas etapas
 
 As funcionalidades abaixo fazem parte do planejamento e ainda não foram implementadas:
 
-- [ ] Sistema de passagem de tempo.
 - [ ] Sistema de amizade.
 - [ ] Mecânicas de evolução dos Pokémon.
 - [ ] Sistema de inventário.

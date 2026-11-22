@@ -9,7 +9,10 @@ public class Mascote
 	public int Alimentacao { get; set; }
 	public int Humor { get; set; }
 	public int Energia { get; set; }
-
+	public decimal DesgasteAlimentacao { get; set; }
+	public decimal DesgasteHumor { get; set; }
+	public decimal DesgasteEnergia { get; set; }
+	public DateTimeOffset? UltimaAtualizacaoUtc { get; set; }
 	public Mascote()
 	{
 		Random random = new();
@@ -29,6 +32,15 @@ public class Mascote
 		Alimentacao = Math.Max(0, Alimentacao - 1);
 		Humor = Math.Min(10, Humor + 2);
 		Energia = Math.Max(0, Energia - 2);
+		if (Alimentacao == 0)
+		{
+			DesgasteAlimentacao = 0m;
+		}
+
+		if (Energia == 0)
+		{
+			DesgasteEnergia = 0m;
+		}
 
 		return true;
 	}
@@ -55,6 +67,11 @@ public class Mascote
 
 		Energia = Math.Min(10, Energia + 4);
 		Alimentacao = Math.Max(0, Alimentacao - 1);
+
+		if (Alimentacao == 0)
+		{
+			DesgasteAlimentacao = 0m;
+		}
 
 		return true;
 	}
