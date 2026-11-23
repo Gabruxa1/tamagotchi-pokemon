@@ -190,6 +190,7 @@ public class InterfaceUsuario
 		Console.WriteLine($"Alimentação: {mascote.Alimentacao}/10 - {estadoAlimentacao}");
 		Console.WriteLine($"Humor:       {mascote.Humor}/10 - {estadoHumor}");
 		Console.WriteLine($"Energia:     {mascote.Energia}/10 - {estadoEnergia}");
+		Console.WriteLine($"Amizade:     {mascote.Amizade:F1}/10");
 
 		Console.WriteLine();
 	}

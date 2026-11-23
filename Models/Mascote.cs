@@ -9,6 +9,7 @@ public class Mascote
 	public int Alimentacao { get; set; }
 	public int Humor { get; set; }
 	public int Energia { get; set; }
+	public decimal Amizade { get; set; } = 0m;
 	public decimal DesgasteAlimentacao { get; set; }
 	public decimal DesgasteHumor { get; set; }
 	public decimal DesgasteEnergia { get; set; }
@@ -32,6 +33,7 @@ public class Mascote
 		Alimentacao = Math.Max(0, Alimentacao - 1);
 		Humor = Math.Min(10, Humor + 2);
 		Energia = Math.Max(0, Energia - 2);
+
 		if (Alimentacao == 0)
 		{
 			DesgasteAlimentacao = 0m;
@@ -41,6 +43,8 @@ public class Mascote
 		{
 			DesgasteEnergia = 0m;
 		}
+
+		Amizade = Math.Clamp(Amizade + 1m, 0m, 10m);
 
 		return true;
 	}
@@ -54,6 +58,7 @@ public class Mascote
 
 		Alimentacao = Math.Min(10, Alimentacao + 3);
 		Humor = Math.Min(10, Humor + 1);
+		Amizade = Math.Clamp(Amizade + 0.5m, 0m, 10m);
 
 		return true;
 	}

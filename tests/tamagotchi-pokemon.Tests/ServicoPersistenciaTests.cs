@@ -59,6 +59,7 @@ public class ServicoPersistenciaTests
 			Alimentacao = 8,
 			Humor = 9,
 			Energia = 7,
+			Amizade = 3.5m,
 			Abilities = new List<AbilitySlot>
 		{
 			new()
@@ -98,6 +99,7 @@ public class ServicoPersistenciaTests
 		Assert.Equal(mascote.Alimentacao, mascoteCarregado.Alimentacao);
 		Assert.Equal(mascote.Humor, mascoteCarregado.Humor);
 		Assert.Equal(mascote.Energia, mascoteCarregado.Energia);
+		Assert.Equal(mascote.Amizade, mascoteCarregado.Amizade);
 
 		Assert.Single(mascoteCarregado.Abilities);
 
@@ -239,5 +241,51 @@ public class ServicoPersistenciaTests
 		await Assert.ThrowsAsync<ArgumentNullException>(
 			() => servico.SalvarAsync(null!)
 		);
+	}
+
+
+	[Fact]
+	public async Task CarregarAsync_SaveAntigoSemAmizade_InicializaAmizadeEmZero()
+	{
+		// Arrange
+		string diretorioTemporario = Path.Combine(
+				Path.GetTempPath(),
+				Guid.NewGuid().ToString()
+		);
+
+		Directory.CreateDirectory(diretorioTemporario);
+
+		string caminhoArquivo = Path.Combine(
+				diretorioTemporario,
+				"jogo.json"
+		);
+
+		string jsonLegado = """
+        {
+                "NomeTreinador": "Ash",
+                "Mascotes": [
+                        {
+                                "Name": "pikachu",
+                                "Height": 4,
+                                "Weight": 60,
+                                "Alimentacao": 8,
+                                "Humor": 9,
+                                "Energia": 7
+                        }
+                ]
+        }
+        """;
+
+		await File.WriteAllTextAsync(caminhoArquivo, jsonLegado);
+
+		var servico = new ServicoPersistencia(caminhoArquivo);
+
+		// Act
+		EstadoJogo resultado = await servico.CarregarAsync();
+
+		// Assert
+		Assert.Equal("Ash", resultado.NomeTreinador);
+		Assert.Single(resultado.Mascotes);
+		Assert.Equal(0m, resultado.Mascotes[0].Amizade);
 	}
 }

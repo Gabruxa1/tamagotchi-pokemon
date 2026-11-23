@@ -330,6 +330,56 @@ Os atributos utilizam escala de 0 a 10 e permanecem representados por valores in
 
 **Observação:** cada mascote possui seu próprio controle temporal, permitindo contabilizar corretamente períodos diferentes desde sua adoção.
 
+### Etapa 9 — Sistema de amizade
+
+**Status:** Concluída.
+
+Implementação de um sistema de amizade individual para cada mascote, permitindo aumentar o vínculo com o Pokémon por meio de interações realizadas durante o jogo.
+
+**Funcionalidades implementadas:**
+
+- Criação da propriedade `Amizade` na classe `Mascote`.
+- Utilização de valores do tipo `decimal`, com escala de 0 a 10.
+- Inicialização da amizade em zero.
+- Aumento da amizade conforme as ações realizadas pelo jogador.
+- Limitação automática dos valores mínimo e máximo da amizade.
+- Preservação da amizade quando uma ação é bloqueada.
+- Exibição do nível de amizade na consulta de status do mascote.
+- Persistência individual da amizade no arquivo JSON.
+- Compatibilidade com arquivos de persistência anteriores, sem a propriedade `Amizade`.
+- Atualização do perfil `PokemonMappingProfile` para ignorar propriedades exclusivas do estado do mascote.
+
+**Regras de amizade:**
+
+| Ação      | Alteração na amizade |
+| --------- | -------------------: |
+| Brincar   |                 +1,0 |
+| Alimentar |                 +0,5 |
+| Dormir    |                    0 |
+
+**Regras de controle:**
+
+- A amizade permanece entre 0 e 10.
+- O aumento ocorre somente quando a ação é executada com sucesso.
+- A passagem do tempo não reduz a amizade.
+- Cada mascote mantém seu próprio nível de amizade.
+- A amizade é preservada entre diferentes execuções por meio da persistência JSON.
+
+**Testes automatizados:**
+
+- Inicialização da amizade em zero.
+- Aumento da amizade ao brincar e alimentar.
+- Ausência de alteração ao dormir.
+- Respeito ao limite máximo de 10.
+- Preservação da amizade quando uma ação é bloqueada.
+- Gravação e recuperação da amizade na persistência JSON.
+- Compatibilidade com saves antigos sem a propriedade `Amizade`.
+- Validação da configuração do AutoMapper.
+
+**Validação:** 29 testes automatizados executados com sucesso, sem falhas.
+
+**Observação:** a amizade é independente das necessidades do mascote e não sofre degradação com a passagem do tempo. A arquitetura permite futuras integrações com itens e outras mecânicas de interação.
+
 ## 🛠️ Tecnologias utilizadas
 
 | Tecnologia         | Aplicação                                   |
@@ -375,6 +425,7 @@ tamagotchi-pokemon/
 ├── tests/
 │   └── tamagotchi-pokemon.Tests/
 │       ├── MascoteTests.cs
+│       ├── PokemonMappingProfileTests.cs
 │       ├── ServicoPersistenciaTests.cs
 │       ├── ServicoTempoTests.cs
 │       └── tamagotchi-pokemon.Tests.csproj
@@ -434,12 +485,12 @@ O desenvolvimento é separado por etapas, mantendo a branch `main` como referên
 | `etapa-6-mapeamento-automapper` | Mapeamento de objetos com AutoMapper  |
 | `etapa-7-persistencia-json`     | Persistência JSON e estado da partida |
 | `etapa-8-passagem-tempo`        | Sistema de passagem de tempo          |
+| `etapa-9-sistema-amizade`       | Sistema de amizade                    |
 
 ## 📌 Próximas etapas
 
 As funcionalidades abaixo fazem parte do planejamento e ainda não foram implementadas:
 
-- [ ] Sistema de amizade.
 - [ ] Mecânicas de evolução dos Pokémon.
 - [ ] Sistema de inventário.
 - [ ] Histórico de atividades.
